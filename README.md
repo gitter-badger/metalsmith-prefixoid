@@ -1,3 +1,50 @@
+# metalsmith-prefixoid
+
+This is a [metalsmith](https://github.com/segmentio/metalsmith) plugin which is used
+to ...
+
+
+## Usage
+```js
+var prefixoid = require('metalsmith-prefixoid');
+
+Metalsmith(__dirname)
+  .use(markdown())
+  .use(templates('handlebars'))
+
+  .use(prefixoid({
+    prefix: '/base_url'
+  }))
+  .build(function(err) {
+    if (err) throw err;
+  });
+```
+
+## Options
+
+* `prefix` **string** *optional*. The ...
+* `is_current` **function(current_url, url)** *optional*.
+The ...
+
+## Config example: 
+Do smth...
+```js
+{
+  ...
+}
+```
+
+Do smth...
+```js
+{
+  ...
+}
+```
+
+
+
+
+## License
 The MIT License (MIT)
 
 Copyright (c) 2015 Chivorotkiv <chivorotkiv@omich.net>
