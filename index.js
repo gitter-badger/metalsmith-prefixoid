@@ -17,6 +17,26 @@ var curry = function(fun, _) {
     };
 };
 
+var namespace = function(namespace, context) {
+    var prevIndex = 0;
+    var nextIndex = namespace.indexOf('.', 0);
+    var parent = context || window;
+
+    do
+    {
+        nextIndex = namespace.indexOf('.', prevIndex);
+        var key = nextIndex >= 0 ? namespace.substring(prevIndex, nextIndex) : namespace.substring(prevIndex);
+        parent[key] = parent[key] || {};
+        parent = parent[key];
+        prevIndex = nextIndex + 1;
+    }
+    while(nextIndex >= 0);
+
+    return parent;
+}
+
+
+
 /**
  * "Makes a copy of some HTML element but changes tag name.
  *  Example:
@@ -127,18 +147,20 @@ var add_classes = function(links_class, spans_class, all_class, elem) {
 
 module.exports = function(config) {
   return function hideshow(files, metalsmith, done) {
-    var prefix = config.prefix || metalsmith.metadata[config.meta] || '';
+    var prefix = config.prefix
+              || config.meta && namespace(config.meta, metalsmith.metadata)
+              || '';
     var transform = config.transform || curry(default_transform, prefix);
     var add_classes1 = curry(add_classes,
-                            config.links_class,
-                            config.spans_class,
-                            config.all_links_class);
+                             config.links_class,
+                             config.spans_class,
+                             config.all_links_class);
 
     for (var file in files) {
         var current_url = transform('/' + (files[file].path || file));
         var is_current = curry(config.is_current || default_is_current, current_url);
         files[file].contents = prepare_links(files[file].contents.toString(),
-                                                is_current, transform, add_classes1)
+                                             is_current, transform, add_classes1)
     }
 
     done();
