@@ -74,7 +74,7 @@ var clone_with_tag = function(elem, tag) {
  * @param  {function} add_classes [varname] [description]
  * @return {string}               [description]
  */
-var prepare_links = function(html, is_current, transform, add_classes) {
+var prepare_links = function(html, is_current, transform, add_classes, span_currents) {
     var div$ = $('<div/>');
     var links = div$.html(html).find('a');
     links.replaceWith(function(i){
@@ -83,13 +83,13 @@ var prepare_links = function(html, is_current, transform, add_classes) {
         var url = link$.attr('href');
         var t_url = transform(url);
         link$.attr('href', t_url);
-        if (!is_current(t_url)) {
-            add_classes(link)
-            return link;
-        } else {
+        if (span_currents && is_current(t_url)) {
             var span = clone_with_tag(link, '<span/>');
             add_classes(span)
             return span;
+        } else {
+            add_classes(link)
+            return link;
         }
     });
     return div$.html();
@@ -160,7 +160,8 @@ module.exports = function(config) {
         var current_url = transform('/' + (files[file].path || file));
         var is_current = curry(config.is_current || default_is_current, current_url);
         files[file].contents = prepare_links(files[file].contents.toString(),
-                                             is_current, transform, add_classes1)
+                                             is_current, transform, add_classes1,
+                                             config.span_currents)
     }
 
     done();
