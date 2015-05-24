@@ -2,7 +2,7 @@
   "name": "metalsmith-prefixoid",
   "version": "0.0.0",
   "author": "Chivorotkiv <chivorotkiv@omich.net>",
-  "description": "...",
+  "description": "Plugin for Metalsmith. Modifies internal urls with some prefix",
   "license": "MIT",
   "homepage": "https://github.com/quizzz-and-chiv/metalsmith-prefixoid",
   "bugs" : "https://github.com/quizzz-and-chiv/metalsmith-prefixoid/issues",
