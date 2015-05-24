@@ -1,4 +1,4 @@
-# metalsmith-prefixoid
+# metalsmith-prefixoid [![npm version](https://badge.fury.io/js/metalsmith-prefixoid.png)](http://badge.fury.io/js/metalsmith-prefixoid)
 
 This is a [metalsmith](https://github.com/segmentio/metalsmith) plugin which prefixizes internal urls.
 
