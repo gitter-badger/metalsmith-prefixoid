@@ -74,15 +74,19 @@ var clone_with_tag = function(elem, tag) {
  * @param  {function} add_classes [varname] [description]
  * @return {string}               [description]
  */
-var prepare_links = function(html, is_current, transform, add_classes, span_currents) {
+var prepare_links = function(html, is_current, transform, add_classes, span_currents, selector, attr) {
     var div$ = $('<div/>');
-    var links = div$.html(html).find('a');
+    var links = div$.html(html).find(selector);
     links.replaceWith(function(i){
         var link = this;
         var link$ = $(link);
-        var url = link$.attr('href');
+        var url = link$.attr(attr);
+        if(!url) {
+            return link;
+        }
+        
         var t_url = transform(url);
-        link$.attr('href', t_url);
+        link$.attr(attr, t_url);
         if (span_currents && is_current(t_url)) {
             var span = clone_with_tag(link, '<span/>');
             add_classes(span)
@@ -137,6 +141,8 @@ var add_classes = function(links_class, spans_class, all_class, elem) {
  * ## Config params: 
  * `meta: 'site.url'` - (optional) will take prefix from metadata.site.url
  * `prefix: '/base/url'` - (optional) take prefix from config:
+ * `selector: 'script'` - (optional, default: 'a') selector selects affected elements
+ * `attr: 'src'` - (optional, default: 'href') attr with URL to modify
  * `span_currents: true` - (optional) will replace links to current page with <span> elements.
  * `is_current: function(current_url, url)` - (optional) will recognize if link is current
  * `transform: function` - (optional) transforms url
@@ -155,13 +161,15 @@ module.exports = function(config) {
                              config.links_class,
                              config.spans_class,
                              config.all_links_class);
+    var selector = config.selector || 'a';
+    var attr = config.attr || 'href';
 
     for (var file in files) {
         var current_url = transform('/' + (files[file].path || file));
         var is_current = curry(config.is_current || default_is_current, current_url);
         files[file].contents = prepare_links(files[file].contents.toString(),
                                              is_current, transform, add_classes1,
-                                             config.span_currents)
+                                             config.span_currents, selector, attr)
     }
 
     done();

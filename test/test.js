@@ -10,8 +10,15 @@ var $ = (function(){
 })();
 
 
+var get_incorrect_a = function(url) {
+  return '<a class="incorrect-a">some text</a>'
+};
 
-var get_link = function(url) {
+var get_incorrect_link = function(url) {
+  return '<link rel="shortcut_icon">'
+};
+
+var get_a = function(url) {
   return '<a href="' + url + '">ololo</a>';
 };
 
@@ -19,11 +26,21 @@ var get_span = function(url) {
   return '<span href="' + url + '">ololo</span>';
 };
 
-var get_data = function(file, url) {
+var get_script = function(url) {
+  return '<script src="' + url + '"></script>';
+};
+
+var get_link = function(url) {
+  return '<link rel="shortcut_icon" type="image/gif" href="' + url + '">'
+};
+
+var get_data = function(file, url, get_contents) {
   var files = {};
-  files[file] = {contents: get_link(url)};
+  get_contents = get_contents || get_a;
+  files[file] = {contents: get_contents(url)};
   return files;
 };
+
 
 var emptfn = function(){};
 
@@ -34,7 +51,7 @@ exports.test_relative_non_current = function(test) {
     span_currents: true
   });
   pref(files, null, emptfn);
-  test.ok(files.a.contents == get_link('a/b'), 'Link must not be changed');
+  test.ok(files.a.contents == get_a('a/b'), 'Link must not be changed');
   test.done();
 };
 
@@ -72,7 +89,7 @@ exports.test_absolute_current_no_span = function(test) {
   pref(files, null, emptfn);
   var elem$ = $(files['a/b'].contents);
   test.ok(elem$[0].tagName == 'A', 'Link must not be converted to span');
-  test.ok(elem$.attr('href') == '/pref/a/b', 'Span must have transformed href attr');
+  test.ok(elem$.attr('href') == '/pref/a/b', 'Link must have transformed href attr');
   test.done();
 };
 
@@ -150,6 +167,95 @@ exports.test_css_span = function(test) {
 }
 
 
+exports.test_selectors_absolute_non_current = function(test) {
+  var files = get_data('a', '/a/b', get_script);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: "script",
+    attr: "src",
+    span_currents: true
+  });
+  pref(files, null, emptfn);
+  var elem$ = $(files['a'].contents);
+  test.ok(elem$[0].tagName == 'SCRIPT', 'Link must be a <SCRIPT>-link');
+  test.ok(elem$.attr('src') == '/pref/a/b', 'Link must have transformed "src" attr');
+  test.done();
+};
+
+exports.test_selectors_relative_non_current = function(test) {
+  var files = get_data('a', 'a/b', get_link);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: "link",
+    attr: "href",
+    span_currents: true
+  });
+  pref(files, null, emptfn);
+  test.ok(files.a.contents == get_link('a/b'), 'Element must not be changed');
+  test.done();
+};
+
+
+exports.test_selectors_absolute_current = function(test) {
+  var files = get_data('a/b', '/a/b', get_script);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: "script",
+    attr: "src",
+    span_currents: true
+  });
+  pref(files, null, emptfn);
+  var elem$ = $(files['a/b'].contents);
+  test.ok(elem$[0].tagName == 'SPAN', 'Element must be converted to span');
+  test.ok(elem$.attr('src') == '/pref/a/b', 'Span must have transformed src attr');
+  test.done();
+};
+
+
+exports.test_selectors_absolute_current_no_span = function(test) {
+  var files = get_data('a/b', '/a/b', get_script);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: "script",
+    attr: "src",
+    span_currents: false
+  });
+  pref(files, null, emptfn);
+  var elem$ = $(files['a/b'].contents);
+  test.ok(elem$[0].tagName == 'SCRIPT', 'Element must not be converted to span');
+  test.ok(elem$.attr('src') == '/pref/a/b', 'Element must have transformed href attr');
+  test.done();
+};
+
+exports.test_incorrect_attr = function(test) {
+  var files = get_data('a', '/a/b', get_incorrect_a);
+  var pref = prefixoid({
+    prefix: '/pref',
+    span_currents: true,
+    links_class: 'links-class',
+    spans_class: 'spans-class',
+    all_links_class: 'all-links-class'
+  });
+  pref(files, null, emptfn);
+  test.ok(files.a.contents == get_incorrect_a('/a/b'), 'Link must not be changed');
+  test.done();
+};
+
+exports.test_selector_incorrect_attr = function(test) {
+  var files = get_data('a', '/a/b', get_incorrect_link);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: "link",
+    attr: "href",
+    span_currents: true,
+    links_class: 'links-class',
+    spans_class: 'spans-class',
+    all_links_class: 'all-links-class'
+  });
+  pref(files, null, emptfn);
+  test.ok(files.a.contents == get_incorrect_link('/a/b'), 'Element must not be changed');
+  test.done();
+};
 
 
 
