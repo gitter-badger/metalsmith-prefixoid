@@ -7,7 +7,7 @@ Let prefix be `/pref`. In this case plugin will work by following way:
 * `http://example.com/sub/dir/` -> `http://example.com/sub/dir/` (doesn't change)
 * `../relative/path` -> `../relative/path` (doesn't change)
 * `another/relative/path` -> `another/relative/path` (doesn't change)
-* `/internal/absolute/path` -> `/pref/internal/absolute/path` **(prefizsizes)**
+* `/internal/absolute/path` -> `/pref/internal/absolute/path` **(prefixizes)**
 
 
 ## Usage
