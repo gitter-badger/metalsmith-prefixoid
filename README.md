@@ -1,7 +1,6 @@
 # metalsmith-prefixoid
 
-This is a [metalsmith](https://github.com/segmentio/metalsmith) plugin which is used
-to prefisize internal urls.
+This is a [metalsmith](https://github.com/segmentio/metalsmith) plugin which prefixizes internal urls.
 
 Let prefix be `/pref`. In this case plugin will work by following way:
 
