@@ -229,7 +229,15 @@ module.exports = function(config) {
 //       )))
 //     (.html div)
 //   ))
-
+//   
+// (defn ^:export get-current-url-pred [props]
+//   (let [base-path (get-base-path props)
+//         current-url (str base-path "/" (.-path props))]
+//     (fn [url]
+//       (or (= url current-url)
+//           (= url (str current-url "/"))
+//           (= url (str current-url "/index.html")))
+//     )))
 
 
 
