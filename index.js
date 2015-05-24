@@ -148,7 +148,7 @@ var add_classes = function(links_class, spans_class, all_class, elem) {
 module.exports = function(config) {
   return function hideshow(files, metalsmith, done) {
     var prefix = config.prefix
-              || config.meta && namespace(config.meta, metalsmith.metadata)
+              || config.meta && namespace(config.meta, metalsmith.metadata())
               || '';
     var transform = config.transform || curry(default_transform, prefix);
     var add_classes1 = curry(add_classes,

@@ -81,7 +81,7 @@ exports.test_meta = function(test) {
   var pref = prefixoid({
     meta: 'site.base_path'
   });
-  pref(files, {metadata: {site: {base_path: '/pref'}}}, emptfn);
+  pref(files, {metadata: function(){return {site: {base_path: '/pref'}}}}, emptfn);
   var elem$ = $(files['a'].contents);
   test.ok(elem$.attr('href') == '/pref/a/b', 'Link must have transformed "href" attr');
   test.done();
