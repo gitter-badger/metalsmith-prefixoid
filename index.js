@@ -168,3 +168,70 @@ module.exports = function(config) {
   };
 };
 
+
+
+
+
+
+
+
+// ---- prototype:
+//  (defn ^:export clone-with-tag
+//   "Makes a copy of some HTML element but changes tag name.
+//    Example:
+//     (clone-with-tag
+//      <span class='a'>foo<b>bar</b></span>
+//      \"<div/>\")
+//     returns:
+//     <div class='a'>foo<b>bar</b></div>"
+//   [elem tag]
+//   (let [clone$ (jq/pure-$ tag)
+//         clone (aget clone$ 0)
+//         attrs (aget elem "attributes")
+//         attrs-len (aget attrs "length")]
+
+//     (.html clone$ (.html (jq/pure-$ elem)))
+
+//     (doall (for [i (range attrs-len)]
+//       (.setAttribute clone
+//                      (aget (aget attrs i) "nodeName")
+//                      (aget (aget attrs i) "nodeValue"))))
+
+//     (aset (aget clone "style") "cssText" (aget (aget elem "style") "cssText"))
+//     clone))
+
+
+
+// (defn ^:export prepare-links
+//   "Transform all links in html text.
+//    For example, function transform may add prefixes to inner urls.
+//    Then it replace all <a>-links by <span>-elements if that was a link
+//    to current-url"
+//   [html current? transform]
+//   (let [div (jq/pure-$ "<div/>")
+//         links (-> div
+//                   (.html html)
+//                   (.find "a"))]
+//     (.replaceWith links
+//       (fn [i] (this-as link
+//         (let [link$ (jq/pure-$ link)
+//               url (.attr link$ "href")
+//               t-url (transform url)]
+//           (if-not (current? t-url)
+//             (do (.attr link$ "href" t-url)
+//                 link)
+//             (let [span (clone-with-tag link "<span/>")
+//                   span$ (jq/pure-$ span)]
+//               (.attr span$ "href" nil)
+//               (.addClass span$ "omich-lib-html-util__span-link")
+//               span)
+//           ))
+//       )))
+//     (.html div)
+//   ))
+
+
+
+
+
+
