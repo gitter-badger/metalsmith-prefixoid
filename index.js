@@ -1,12 +1,22 @@
 'use strict';
 
-var $ = (function(){
-    var $ = require('jquery');
+var get_$ = function(text){
+    var jquery = require('jquery');
     var jsdom = require('jsdom');
-    var document = jsdom.jsdom('');
+    var document = jsdom.jsdom(text || '');
     var window = document.defaultView;
-    return $(window);
-})();
+    var $ = jquery(window);
+    $.get_doctype_string = function() {
+        var node = document.doctype;
+        return node && "<!DOCTYPE "
+                 + node.name
+                 + (node.publicId ? ' PUBLIC "' + node.publicId + '"' : '')
+                 + (!node.publicId && node.systemId ? ' SYSTEM' : '') 
+                 + (node.systemId ? ' "' + node.systemId + '"' : '')
+                 + '>' || '';
+    };
+    return $;
+};
 
 var curry = function(fun, _) {
     var slice = Array.prototype.slice;
@@ -35,6 +45,12 @@ var namespace = function(namespace, context) {
     return parent;
 }
 
+var is_html = function(text) {
+    var endTag = '</html>';
+    text = text.trim();
+    return text.length > endTag.length
+        && endTag == text.substring(text.length - endTag.length).toLowerCase();
+}
 
 
 /**
@@ -46,7 +62,7 @@ var namespace = function(namespace, context) {
  *   returns:
  *   <div class='a'>foo<b>bar</b></div>"
  */
-var clone_with_tag = function(elem, tag) {
+var clone_with_tag = function(elem, tag, $) {
     var clone$ = $(tag);
     var clone = clone$[0];
     var attrs = elem.attributes;
@@ -75,8 +91,8 @@ var clone_with_tag = function(elem, tag) {
  * @return {string}               [description]
  */
 var prepare_links = function(html, is_current, transform, add_classes, span_currents, selector, attr) {
-    var div$ = $('<div/>');
-    var links = div$.html(html).find(selector);
+    var $ = get_$(is_html(html) ? html : '<body>' + html + '</body>');
+    var links = $(selector);
     links.replaceWith(function(i){
         var link = this;
         var link$ = $(link);
@@ -84,19 +100,25 @@ var prepare_links = function(html, is_current, transform, add_classes, span_curr
         if(!url) {
             return link;
         }
+
         
         var t_url = transform(url);
         link$.attr(attr, t_url);
         if (span_currents && is_current(t_url)) {
-            var span = clone_with_tag(link, '<span/>');
-            add_classes(span)
+            var span = clone_with_tag(link, '<span/>', $);
+            add_classes(span, $)
             return span;
         } else {
-            add_classes(link)
+            add_classes(link, $)
             return link;
         }
     });
-    return div$.html();
+
+    if (is_html(html)) {
+        return $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n'
+    } else {
+        return $('body').html();
+    }
 };
 
 var default_is_current = function(current_url, url) {
@@ -124,7 +146,7 @@ var default_transform = function(prefix, url) {
     }
 }
 
-var add_classes = function(links_class, spans_class, all_class, elem) {
+var add_classes = function(links_class, spans_class, all_class, elem, $) {
     var elem$ = $(elem);
     if(all_class) {
         elem$.addClass(all_class);
