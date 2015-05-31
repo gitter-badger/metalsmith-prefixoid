@@ -44,6 +44,10 @@ Very optional options:
     * `current_url + '/index.html'`
 * `transform: function` - (optional) Check if url must be transformed and transforms url. By default it works as described above however any logic may be here.
 
+Array of options is supported.
+```js
+.use(prefixoid([{...}, {...}, {...}]))
+```
 
 ## Config example: 
 ```js
@@ -53,23 +57,21 @@ Very optional options:
     baseFile: 'base.html',
     nonStatic: true
   }))
-  .use(prefixoid({
-    meta: 'site.base_path',
-    span_currents: true,
-    links_class: 'omich-link_a',
-    spans_class: 'omich-link_current',
-    all_links_class: 'omich-link'
-  }))
-  .use(prefixoid({
-    meta: 'site.base_path',
-    selector: 'link',
-    attr: 'href'
-  }))
-  .use(prefixoid({
-    meta: 'site.base_path',
-    selector: 'script',
-    attr: 'src'
-  }))
+  .use(prefixoid([{
+      meta: 'site.base_path',
+      span_currents: true,
+      links_class: 'omich-link_a',
+      spans_class: 'omich-link_current',
+      all_links_class: 'omich-link'
+    },{
+      meta: 'site.base_path',
+      selector: 'link',
+      attr: 'href'
+    },{
+      meta: 'site.base_path',
+      selector: 'script',
+      attr: 'src'
+    }]))
   .build(function(err) {
     if (err) {
       throw err;
