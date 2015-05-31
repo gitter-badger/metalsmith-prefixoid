@@ -4,12 +4,12 @@
   "author": "Chivorotkiv <chivorotkiv@omich.net>",
   "description": "Plugin for Metalsmith. Modifies internal urls with some prefix",
   "license": "MIT",
-  "homepage": "https://github.com/quizzz-and-chiv/metalsmith-prefixoid",
-  "bugs" : "https://github.com/quizzz-and-chiv/metalsmith-prefixoid/issues",
+  "homepage": "https://github.com/evoja/metalsmith-prefixoid",
+  "bugs" : "https://github.com/evoja/metalsmith-prefixoid/issues",
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/quizzz-and-chiv/metalsmith-prefixoid.git"
+    "url": "https://github.com/evoja/metalsmith-prefixoid.git"
   },
 
   "keywords": [
