@@ -16,6 +16,14 @@ var get_$ = function(text){
                  + (node.systemId ? ' "' + node.systemId + '"' : '')
                  + '>' || '';
     };
+    $.rewrite = function(text) {
+        document.open('text/html', 'replace');
+        document.write(text);
+        document.close();
+    };
+    $.close = function() {
+        window.close();
+    }
     return $;
 };
 
@@ -167,12 +175,15 @@ var add_classes = function(links_class, spans_class, all_class, elem, $) {
  * `all_links_class: 'all-link'` - css class of every link processed with plugin
  */
 module.exports = function(config) {
-    var config_arr = get_$().isArray(config) ? config : [config];
+    var $ = get_$();
+    var config_arr = $.isArray(config) ? config : [config];
+    $.close();
 
     return function hideshow(files, metalsmith, done) {
+        var $ = get_$();
         for (var file in files) {
-            var html = files[file].contents.toString()
-            var $ = get_$(is_html(html) ? html : '<body>' + html + '</body>');
+            var html = files[file].contents.toString();
+            $.rewrite(is_html(html) ? html : '<body>' + html + '</body>');
 
             for (var i = 0; i < config_arr.length; ++i) {
                 var config_item = config_arr[i];
@@ -193,11 +204,12 @@ module.exports = function(config) {
             }
 
             if (is_html(html)) {
-                files[file].contents = $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n'
+                files[file].contents = $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n';
             } else {
                 files[file].contents = $('body').html();
             }
         }
+        $.close();
         done();
     }
 };
