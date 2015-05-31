@@ -291,3 +291,30 @@ exports.test_save_html_with_head_and_doctype = function(test) {
 
 
 
+exports.test_array_settings = function(test) {
+  var get_html = function(url, url2) {
+    var url2 = url2 || url
+    return '<a href="' + url + '" class="first"></a><a href="' + url2 + '" class="second"></a>';
+  }
+
+  var files = get_data('a', '/a/b', get_html);
+  var pref = prefixoid([{
+      prefix: '/first',
+      selector: 'a.first',
+      attr: 'href'
+    },{
+      prefix: '/second',
+      selector: 'a.second',
+      attr: 'href'
+    }]);
+  pref(files, null, emptfn);
+  var elem$ = $(files.a.contents);
+  test.ok($(elem$[0]).attr('href') == '/first/a/b', 'URL of first element must have "/first" prefix');
+  test.ok($(elem$[1]).attr('href') == '/second/a/b', 'URL of second element must have "/second" prefix');
+  test.ok(files.a.contents == get_html('/first/a/b', '/second/a/b'), 'code must be changed correctly');
+  test.done();
+};
+
+
+
+

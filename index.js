@@ -7,6 +7,7 @@ var get_$ = function(text){
     var window = document.defaultView;
     var $ = jquery(window);
     $.get_doctype_string = function() {
+        // got it here: http://stackoverflow.com/a/10162353/1549127
         var node = document.doctype;
         return node && "<!DOCTYPE "
                  + node.name
@@ -90,8 +91,7 @@ var clone_with_tag = function(elem, tag, $) {
  * @param  {function} add_classes [varname] [description]
  * @return {string}               [description]
  */
-var prepare_links = function(html, is_current, transform, add_classes, span_currents, selector, attr) {
-    var $ = get_$(is_html(html) ? html : '<body>' + html + '</body>');
+var prepare_links = function($, is_current, transform, add_classes, span_currents, selector, attr) {
     var links = $(selector);
     links.replaceWith(function(i){
         var link = this;
@@ -113,12 +113,6 @@ var prepare_links = function(html, is_current, transform, add_classes, span_curr
             return link;
         }
     });
-
-    if (is_html(html)) {
-        return $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n'
-    } else {
-        return $('body').html();
-    }
 };
 
 var default_is_current = function(current_url, url) {
@@ -144,7 +138,7 @@ var default_transform = function(prefix, url) {
     } else {
         return prefix + url;
     }
-}
+};
 
 var add_classes = function(links_class, spans_class, all_class, elem, $) {
     var elem$ = $(elem);
@@ -157,7 +151,7 @@ var add_classes = function(links_class, spans_class, all_class, elem, $) {
     } else if (elem.tagName == 'A' && links_class) {
         elem$.addClass (links_class);
     }
-}
+};
 
 /**
  * ## Config params: 
@@ -172,30 +166,40 @@ var add_classes = function(links_class, spans_class, all_class, elem, $) {
  * `spans_class: 'span-link'` - css class of spans which were links.
  * `all_links_class: 'all-link'` - css class of every link processed with plugin
  */
-
 module.exports = function(config) {
-  return function hideshow(files, metalsmith, done) {
-    var prefix = config.prefix
-              || config.meta && namespace(config.meta, metalsmith.metadata())
-              || '';
-    var transform = config.transform || curry(default_transform, prefix);
-    var add_classes1 = curry(add_classes,
-                             config.links_class,
-                             config.spans_class,
-                             config.all_links_class);
-    var selector = config.selector || 'a';
-    var attr = config.attr || 'href';
+    var config_arr = get_$().isArray(config) ? config : [config];
 
-    for (var file in files) {
-        var current_url = transform('/' + (files[file].path || file));
-        var is_current = curry(config.is_current || default_is_current, current_url);
-        files[file].contents = prepare_links(files[file].contents.toString(),
-                                             is_current, transform, add_classes1,
-                                             config.span_currents, selector, attr)
+    return function hideshow(files, metalsmith, done) {
+        for (var file in files) {
+            var html = files[file].contents.toString()
+            var $ = get_$(is_html(html) ? html : '<body>' + html + '</body>');
+
+            for (var i = 0; i < config_arr.length; ++i) {
+                var config_item = config_arr[i];
+                var prefix = config_item.prefix
+                          || config_item.meta && namespace(config_item.meta, metalsmith.metadata())
+                          || '';
+                var transform = config_item.transform || curry(default_transform, prefix);
+                var add_classes1 = curry(add_classes,
+                                         config_item.links_class,
+                                         config_item.spans_class,
+                                         config_item.all_links_class);
+                var selector = config_item.selector || 'a';
+                var attr = config_item.attr || 'href';
+                var current_url = transform('/' + (files[file].path || file));
+                var is_current = curry(config_item.is_current || default_is_current, current_url);
+                prepare_links($, is_current, transform, add_classes1,
+                                config_item.span_currents, selector, attr)
+            }
+
+            if (is_html(html)) {
+                files[file].contents = $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n'
+            } else {
+                files[file].contents = $('body').html();
+            }
+        }
+        done();
     }
-
-    done();
-  };
 };
 
 
