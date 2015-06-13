@@ -290,6 +290,24 @@ exports.test_save_html_with_head_and_doctype = function(test) {
 };
 
 
+exports.test_save_html_with_attributes_head_and_doctype = function(test) {
+  var get_html_with_head = function(url) {
+    return '<!DOCTYPE html><html some-attr="hello"><head><link href="' + url + '"></head><body><div>AAA</div></body></html>  \n \n  ';
+  }
+
+  var files = get_data('a', '/a/b', get_html_with_head);
+  var pref = prefixoid({
+    prefix: '/pref',
+    selector: 'link',
+    attr: 'href'
+  });
+  pref(files, null, emptfn);
+  test.ok(files.a.contents.substring(0, 50) == get_html_with_head('/pref/a/b').substring(0, 50), 'Text must save correct html structure');
+  test.done();
+};
+
+
+
 
 exports.test_array_settings = function(test) {
   var get_html = function(url, url2) {

@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-prefixoid",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Chivorotkiv <chivorotkiv@omich.net>",
   "description": "Plugin for Metalsmith. Modifies internal urls with some prefix",
   "license": "MIT",

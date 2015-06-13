@@ -204,7 +204,7 @@ module.exports = function(config) {
             }
 
             if (is_html(html)) {
-                files[file].contents = $.get_doctype_string() + '<html>' + $('html').html() + '</html>\n';
+                files[file].contents = $.get_doctype_string() + $('html')[0].outerHTML + '\n';
             } else {
                 files[file].contents = $('body').html();
             }
