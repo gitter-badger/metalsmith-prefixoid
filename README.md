@@ -1,5 +1,7 @@
 # metalsmith-prefixoid [![npm version](https://badge.fury.io/js/metalsmith-prefixoid.png)](http://badge.fury.io/js/metalsmith-prefixoid) [![Build Status](https://travis-ci.org/evoja/metalsmith-prefixoid.png)](https://travis-ci.org/evoja/metalsmith-prefixoid)
 
+[![Join the chat at https://gitter.im/evoja/metalsmith-prefixoid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/evoja/metalsmith-prefixoid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This is a [metalsmith](https://github.com/segmentio/metalsmith) plugin which prefixizes internal urls.
 
 Let prefix be `/pref`. In this case plugin will work by following way:
